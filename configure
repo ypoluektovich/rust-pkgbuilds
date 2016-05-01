@@ -1,0 +1,16 @@
+#!/bin/bash
+
+(
+    source /etc/makepkg.conf
+    echo "m4_define([CURRENT_ARCHITECTURE], [$CARCH])dnl"
+    echo "m4_define([PKGEXT], [$PKGEXT])dnl"
+    echo "m4_define([SRCEXT], [$SRCEXT])dnl"
+    PKGDEST=$( realpath -s "${PKGDEST:-.}" )
+    SRCPKGDEST=$( realpath -s "${SRCPKGDEST:-.}" )
+    echo "m4_define([PKGDEST], [$PKGDEST])dnl"
+    echo "m4_define([SRCPKGDEST], [$SRCPKGDEST])dnl"
+) >env.m4
+
+autom4te -l m4sugar defines.m4 env.m4 --freeze --output=env.m4f
+
+autom4te env.m4f Makefile.m4 --output=Makefile
